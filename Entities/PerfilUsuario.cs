@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace UsuariosApi.Entities
 {
-    public class Usuarios
+    public class PerfilUsuario
     {
         public int id { get; set; }
         public string documento { get; set; }
@@ -13,7 +13,7 @@ namespace UsuariosApi.Entities
         public string nombre { get; set; }
         public string mail { get; set; }
         public Boolean estado { get; set; }
-        public int idRol { get; set; }
-        public int idDependencia { get; set; }
+        public Rol rol { get; set; }
+        public Dependencias dep { get; set; }
     }
 }
