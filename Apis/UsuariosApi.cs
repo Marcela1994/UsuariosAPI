@@ -34,9 +34,11 @@ namespace UsuariosApi.Apis
 
         // GET api/<UsuariosApi>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public ActionResult Get(int id)
         {
-            return "value";
+            UsuariosController usuarioController = new UsuariosController(configuration);
+            List<PerfilUsuario> listadoUsuario = usuarioController.consultarUsuarioPorID(id);
+            return Ok(listadoUsuario);
         }
 
         // POST api/<UsuariosApi>
@@ -49,14 +51,18 @@ namespace UsuariosApi.Apis
 
         // PUT api/<UsuariosApi>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public ActionResult Put(int id, [FromBody] Usuarios usuario)
         {
+            UsuariosController usuarioController = new UsuariosController(configuration);
+            return Ok(usuarioController.modificarUsuario(id, usuario));
         }
 
         // DELETE api/<UsuariosApi>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public ActionResult Delete(int id)
         {
+            UsuariosController usuarioController = new UsuariosController(configuration);
+            return Ok(usuarioController.eliminarUsuario(id));
         }
     }
 }

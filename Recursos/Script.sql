@@ -135,3 +135,13 @@ UPDATE dbo.usuarios
 SET documento = @documento, username = @username, nombre = @nombre, email = @email, estado = @estado
 WHERE id = @id
 end
+
+
+***************************************************************
+create procedure eliminarUsuario(
+@id int
+)
+as
+begin
+delete from dbo.usuarios where id = @id
+end

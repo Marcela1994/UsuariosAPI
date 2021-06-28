@@ -64,7 +64,7 @@ namespace UsuariosApi.DAO
                                     usuario.rol = rol;
 
                                     listadoUsuarios.Add(usuario);
-                                }                                
+                                }
                             }
                         }
                     }
@@ -114,14 +114,136 @@ namespace UsuariosApi.DAO
             }
         }
 
-        public int modificarUsuario(Usuarios usuario)
+        public List<PerfilUsuario> consultarUsuarioPorID(int id)
         {
-            return 0;
+            List<PerfilUsuario> listadoUsuarios = new List<PerfilUsuario>();
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("consultaUsuarioPorID", sql))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+                        Console.WriteLine("Consulta del usuario");
+                        using (var adapter = new SqlDataAdapter(cmd))
+                        {
+                            sql.Open();
+                            cmd.ExecuteNonQuery();
+                            adapter.SelectCommand = cmd;
+                            using (DataTable dt = new DataTable())
+                            {
+                                adapter.Fill(dt);
+                                PerfilUsuario usuario = new PerfilUsuario();
+                                Rol rol = new Rol();
+                                Dependencias dep = new Dependencias();
+                                usuario.id = int.Parse(dt.Rows[0]["id"].ToString());
+                                usuario.documento = (dt.Rows[0]["documento"].ToString());
+                                usuario.username = (dt.Rows[0]["username"].ToString());
+                                usuario.nombre = (dt.Rows[0]["nombre"].ToString());
+                                usuario.mail = (dt.Rows[0]["email"].ToString());
+                                usuario.estado = Boolean.Parse(dt.Rows[0]["estado"].ToString());
+                                // Completar informacion dependencia
+                                dep.id = int.Parse(dt.Rows[0]["id_dependencia"].ToString());
+                                dep.codigo = (dt.Rows[0]["codigo"].ToString());
+                                dep.descrípcion = (dt.Rows[0]["descripcion"].ToString());
+                                dep.cargo = (dt.Rows[0]["cargo"].ToString());
+                                dep.estado = Boolean.Parse(dt.Rows[0]["estado_dependencia"].ToString());
+                                // Completar informacion rol
+                                rol.id = int.Parse(dt.Rows[0]["id_rol"].ToString());
+                                rol.descrípcion = (dt.Rows[0]["descripcion_rol"].ToString());
+                                rol.siglaRol = (dt.Rows[0]["sigla_rol"].ToString());
+                                rol.estado = Boolean.Parse(dt.Rows[0]["estado_rol"].ToString());
+
+                                usuario.dep = dep;
+                                usuario.rol = rol;
+
+                                listadoUsuarios.Add(usuario);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error al consultar");
+                Console.WriteLine("-> " + e.Message);
+                Console.WriteLine("-> " + e.ToString());
+                return listadoUsuarios;
+            }
+
+            return listadoUsuarios;
         }
+
+
 
         public int eliminarUsuario(Usuarios usuario)
         {
             return 0;
+        }
+
+
+        public int modificarUsuario(int id, Usuarios usuario)
+        {
+            List<PerfilUsuario> listadoUsuarios = new List<PerfilUsuario>();
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                        using (SqlCommand cmd = new SqlCommand("modificarUsuario", sql))
+                        {
+                            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                            cmd.Parameters.Add(new SqlParameter("@id", id));
+                            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                            cmd.Parameters.Add(new SqlParameter("@documento", usuario.documento));
+                            cmd.Parameters.Add(new SqlParameter("@username", usuario.username));
+                            cmd.Parameters.Add(new SqlParameter("@nombre", usuario.nombre));
+                            cmd.Parameters.Add(new SqlParameter("@email", usuario.mail));
+                            cmd.Parameters.Add(new SqlParameter("@estado", usuario.estado));
+                            sql.Open();
+                            int res = cmd.ExecuteNonQuery();
+                            Console.WriteLine("Se inserto correctamente");
+                            return res;
+                        }
+                    
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error al editar");
+                Console.WriteLine("-> " + e.Message);
+                Console.WriteLine("-> " + e.ToString());
+                return 0;
+            }
+        }
+
+        public int eliminarUsuario(int id)
+        {
+            List<PerfilUsuario> listadoUsuarios = new List<PerfilUsuario>();
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("eliminarUsuario", sql))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        sql.Open();
+                        int res = cmd.ExecuteNonQuery();
+                        Console.WriteLine("Se elimino correctamente");
+                        return res;
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error al editar");
+                Console.WriteLine("-> " + e.Message);
+                Console.WriteLine("-> " + e.ToString());
+                return 1;
+            }
         }
     }
 }
